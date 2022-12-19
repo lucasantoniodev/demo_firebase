@@ -6,15 +6,8 @@ import { UserProps, UserServiceInstance } from '../services/userService'
 
 export const Account = () => {
   const navigate = useNavigate()
-  const { user, logOut } = UserAuth()
+  const { user } = UserAuth()
 
-  const handleSignOut = async () => {
-    try {
-      await logOut()
-    } catch (error) {
-      console.log(error)
-    }
-  }
   useEffect(() => {
     if (!user) {
       navigate('/')
@@ -27,9 +20,8 @@ export const Account = () => {
         <h1>Account</h1>
         <div>
           <p>Welcome, {user?.displayName}</p>
+          <img src={`${user?.photoURL}`} alt='' />
         </div>
-
-        <button onClick={handleSignOut}>Logout</button>
       </div>
     </Protected>
   )

@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { fetchSignInMethodsForEmail, getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import firebase from "firebase-admin";
+// import firebase from "firebase-admin";
 
 // import { getAnalytics } from "firebase/analytics";
 
@@ -17,7 +17,7 @@ const firebaseConfig = {
 };
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const appAdmin = firebase.initializeApp(firebaseConfig);
+// export const appAdmin = firebase.initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
 export const firestoreDatabase = getFirestore(app);

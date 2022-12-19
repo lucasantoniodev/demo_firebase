@@ -1,8 +1,20 @@
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { UserAuth } from '../contexts/AuthContext'
+import GoogleButton from 'react-google-button'
+import { useEffect } from 'react'
 
 export const Navbar = () => {
-  const { user, logOut } = UserAuth()
+  const navigate = useNavigate()
+  const { googleSignIn, user, logOut } = UserAuth()
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await googleSignIn()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const handleSignOut = async () => {
     try {
       await logOut()
@@ -11,16 +23,29 @@ export const Navbar = () => {
     }
   }
 
+  useEffect(() => {
+    if (user != null) {
+      navigate('/account')
+    }
+  }, [user])
+
   return (
     <>
-      <div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between'
+        }}
+      >
         <h1>Firebase Google Auth & Context</h1>
+        {user?.displayName ? (
+          <button onClick={handleSignOut}>Logout</button>
+        ) : (
+          <GoogleButton onClick={handleGoogleSignIn} />
+        )}
       </div>
-      {user?.displayName ? (
-        <button onClick={handleSignOut}>Logout</button>
-      ) : (
-        <Link to='/signin'>Continuar com o grugou</Link>
-      )}
+
+      <Outlet />
     </>
   )
 }

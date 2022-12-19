@@ -12,13 +12,15 @@ import {
   signOut,
   onAuthStateChanged,
   User,
-  fetchSignInMethodsForEmail
+  fetchSignInMethodsForEmail,
+  getIdToken
 } from 'firebase/auth'
 
 import { collection, addDoc, doc, getDoc, getDocs } from 'firebase/firestore'
 
-import { appAdmin, auth, firestoreDatabase } from '../firebase/firebase'
+import { auth, firestoreDatabase } from '../firebase/firebase'
 import { UserServiceInstance } from '../services/userService'
+import { createUser, validateUserExists } from '../services/apiService'
 
 type ContextProps = {
   user: User | null
@@ -45,43 +47,20 @@ export const AuthContextProvider = ({ children }: Props) => {
   const googleSignIn = async () => {
     const provider = new GoogleAuthProvider()
 
-    const { user } = await signInWithPopup(auth, provider)
+    const { user } = await signInWithPopup(auth, provider) //  Entidade de user: https://prnt.sc/xeURVkOfSu11
+    const token = await user.getIdToken()
 
-    // Buscando se o usuário já existe no banco de dados
-    const userResult = await UserServiceInstance.getUserByID(user.uid)
-
-    try {
-      // const json = appAdmin.auth().verifyIdToken(await user.getIdToken())
-      // console.log(json)
-    } catch (error) {
-      console.log('CRASHOU TUDO')
-    }
-
-    if (!userResult) {
-      try {
-        const newUser = {
-          id: user.uid,
-          email: user.email
-        }
-        await UserServiceInstance.addUser(newUser)
-
-        /**
-         * Mongoose
-         *
-         * POST (https://dbinclui-stating.onrender.com/users, newUser)
-         *
-         */
-        alert('Usuário cadastrado com sucesso!')
-      } catch (error) {
-        console.log(error)
-      }
+    const result = await validateUserExists(token)
+    console.log(token)
+    if (!result) {
+      const response = await createUser(token)
+      console.log(response)
     }
   }
 
   useEffect(() => {
     const unSubscribe = onAuthStateChanged(auth, currentUser => {
-      setUser(currentUser) // https://prnt.sc/xeURVkOfSu11
-      console.log('User', currentUser)
+      setUser(currentUser)
     })
 
     return () => {
