@@ -14,7 +14,7 @@ export const createUser = async (token: string) => {
 
 export const validateUserExists = async (token: string) => {
   try {
-    const response = await axios.get("http://localhost:3001/users/validate", {
+    const response = await axios.get("http://localhost:3001/users/verify", {
       headers: { Authorization: `Bearer ${token}` },
     });
 

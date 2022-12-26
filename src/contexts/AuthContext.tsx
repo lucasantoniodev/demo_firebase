@@ -42,19 +42,20 @@ const AuthContext = createContext<ContextProps>(initialValue)
 
 export const AuthContextProvider = ({ children }: Props) => {
   const [user, setUser] = useState<User | null>(null)
-
+  
   // Função para fazer login com o Popup do google;
   const googleSignIn = async () => {
     const provider = new GoogleAuthProvider()
 
     const { user } = await signInWithPopup(auth, provider) //  Entidade de user: https://prnt.sc/xeURVkOfSu11
+    
     const token = await user.getIdToken()
-
-    const result = await validateUserExists(token)
     console.log(token)
+    // Valida se o usuário já existe (Retorna: true ou false)
+    const result = await validateUserExists(token)
+
     if (!result) {
-      const response = await createUser(token)
-      console.log(response)
+      await createUser(token)
     }
   }
 
