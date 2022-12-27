@@ -23,3 +23,15 @@ export const validateUserExists = async (token: string) => {
     console.log(error);
   }
 };
+
+export const getUserByUid = async (token: string) => {
+  try {
+    const response = await axios.get("http://localhost:3001/users", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+   return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
